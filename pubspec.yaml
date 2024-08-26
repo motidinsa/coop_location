@@ -38,6 +38,7 @@ dependencies:
   geolocator: ^13.0.1
   get: ^4.6.6
   location:
+  figma_squircle: ^0.5.3
 
 dev_dependencies:
   flutter_test:
