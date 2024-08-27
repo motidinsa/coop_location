@@ -21,7 +21,6 @@ class _CustomTextField2State extends State<CustomTextField2> {
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -36,22 +35,21 @@ class _CustomTextField2State extends State<CustomTextField2> {
       );
     });
     return TextFormField(
-      textAlignVertical: TextAlignVertical.center,
-      controller: textEditingController,
-      focusNode: focusNode,
-      maxLines: widget.title == descriptionN ? 2 : 1,
-      readOnly: isReadOnlyTitle(title: widget.title),
-      onChanged: (data) => onTextFieldChange(
-        title: widget.title,
-        index: widget.index,
-        data: data,
-      ),
-      onTap: () => onTextFieldPressed(
-        title: widget.title,
-        index: widget.index,
-      ),
-      decoration: InputDecoration(
-          fillColor: widget.color ?? Colors.green.shade50,
+        textAlignVertical: TextAlignVertical.center,
+        controller: textEditingController,
+        focusNode: focusNode,
+        readOnly: isReadOnlyTitle(title: widget.title),
+        keyboardType: widget.title == 'Phone number'?TextInputType.phone:null,
+        onChanged: (data) => onTextFieldChange(
+              title: widget.title,
+              data: data,
+            ),
+        onTap: () => onTextFieldPressed(
+              title: widget.title,
+              index: widget.index,context: context
+            ),
+        decoration: InputDecoration(
+          fillColor: widget.color ?? Color(0xff00AEEF).withOpacity(.1),
           filled: true,
           errorMaxLines: 2,
           border: UnderlineInputBorder(
@@ -59,15 +57,17 @@ class _CustomTextField2State extends State<CustomTextField2> {
               borderRadius: BorderRadius.circular(12)),
           prefixIcon: titleToIcon(title: widget.title),
           suffixIcon: getSuffixWidget(title: widget.title),
-          suffixIconConstraints: BoxConstraints(),
+          suffixIconConstraints: BoxConstraints(),helperText: 'eg, bole road rwanda',
+          // hintText: 'hint text',
           labelText: widget.title,
           // labelStyle: TextStyle(overflow: TextOverflow.fade),
           floatingLabelStyle: TextStyle(color: Colors.green.shade900),
-          contentPadding:   const EdgeInsets.only(left: 30, right: 20, top: 10, bottom: 10),
-      // validator: (value) => validateInput(
-      //   data: textEditingController.text,
-      //   title: widget.title,
-      // ),
-    );
+          contentPadding:
+              const EdgeInsets.only(left: 30, right: 20, top: 10, bottom: 10),
+          // validator: (value) => validateInput(
+          //   data: textEditingController.text,
+          //   title: widget.title,
+          // ),
+        ));
   }
 }

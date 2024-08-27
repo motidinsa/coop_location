@@ -1,9 +1,20 @@
+import 'package:coop_location/home/controller.dart';
+import 'package:coop_location/home/custom_text_field_2.dart';
+import 'package:coop_location/home/functions.dart';
+import 'package:coop_location/home/shadowed_container.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:location/location.dart' as loc;
+
+import 'home/action_button.dart';
+import 'home/parse_init.dart';
 // import 'package:location/location.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  parseInit();
   runApp(const MyApp());
 }
 
@@ -13,35 +24,47 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return GlobalLoaderOverlay(
+      useDefaultLoading: false,
+      overlayWidgetBuilder: (_) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: Color(0xff00AEEF),
+                strokeWidth: 3,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                'Submitting, please wait',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54
+                ),
+              )
+            ],
+          ),
+        );
+      },
+      child: GetMaterialApp(
+        title: 'Coop location',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff00AEEF)),
+          useMaterial3: true,
+        ),
+        home: const MyHomePage(title: 'Coop location'),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
 
   final String title;
 
@@ -51,77 +74,123 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Position? _currentPosition;
-  loc.Location location =  loc.Location();
+  loc.Location location = loc.Location();
 
-  Future<bool> _handleLocationPermission() async {
-
-    bool _serviceEnabled;
-
-    LocationPermission permission;
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        debugPrint('Location Denied once');
-      }
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location permissions are permanently denied, we cannot request permissions.')));
-      return false;
-    }
-    return true;
+  @override
+  void initState() {
+    Get.put<Controller>(Controller());
+    getCurrentPosition();
+    super.initState();
   }
-  Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
-    if (!hasPermission) return;
-    else{
-      await Geolocator.getCurrentPosition(locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
-          .then((Position position) {
-        setState(() => _currentPosition = position);
-      }).catchError((e) {
-        debugPrint(e);
-      });
-    }
 
-  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-
-        child: Column(
-
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '${_currentPosition?.latitude},${_currentPosition?.longitude}',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        unFocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 15, bottom: 15),
+          child: ShadowedContainer(
+            child: GetBuilder<Controller>(builder: (controller) {
+              if (controller.isSubmitting) {
+                executeAfterBuild(() {
+                  context.loaderOverlay.show();
+                });
+              } else {
+                executeAfterBuild(() {
+                  context.loaderOverlay.hide();
+                });
+              }
+              return ListView(
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                children: [
+                  const SizedBox(height: 20),
+                  Form(
+                    key: controller.formKey,
+                    // autovalidateMode: addProductController.isSubmitButtonPressed?AutovalidateMode.always:null,
+
+                    child: ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (ctx, index) => CustomTextField2(
+                        title: controller.titles[index],
+                        index: index,
+                      ),
+                      separatorBuilder: (ctx, index) => SizedBox(
+                        height: 15,
+                      ),
+                      itemCount: controller.titles.length,
+                      shrinkWrap: true,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (controller.isLocationLoading) ...[
+                        Text('Fetching location'),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xff00AEEF),
+                            ))
+                      ] else if (controller.locationError) ...[
+                        Text('Some error occured'),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              getCurrentPosition();
+                            },
+                            child: Text(
+                              'Retry',
+                              style: TextStyle(color: Color(0xff00AEEF)),
+                            ))
+                      ] else
+                        Column(
+                          children: [
+                            Text(
+                                'Coordinate: ${controller.latitude},${controller.longitude}'),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  getCurrentPosition();
+                                },
+                                child: Text(
+                                  'Refresh location',
+                                  style: TextStyle(color: Color(0xff00AEEF)),
+                                ))
+                          ],
+                        )
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 0, bottom: 15, left: 10, right: 10),
+                    child: ActionButton(),
+                  ),
+                ],
+              );
+            }),
+          ),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _getCurrentPosition,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

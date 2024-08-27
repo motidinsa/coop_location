@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'functions.dart';
+
 class Controller extends GetxController {
   String type = '';
   String district = '';
+  String branch = '';
+  String branchCode = '';
+  String phoneNumber = '';
+  String region = '';
   String city = '';
-  String town = '';
-  String latitude = '';
-  String longitude = '';
+  String street = '';
+  double latitude = 0;
+  double longitude = 0;
+  bool isLocationLoading = false;
+  bool locationError = false;
+  bool isSubmitting = false;
+  List<String> titles = [
+    'Type',
+    'District',
+    'Branch name',
+    'Branch code',
+    'Phone number',
+    'Region',
+    'City',
+    'Street'
+  ];
+  final formKey = GlobalKey<FormState>();
 
   static Controller get to => Get.find();
 
   @override
   Future<void> onInit() async {
-    super.onInit();
 
+    super.onInit();
   }
 }

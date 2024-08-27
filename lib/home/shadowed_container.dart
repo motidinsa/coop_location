@@ -19,7 +19,7 @@ class ShadowedContainer extends StatelessWidget {
       this.horizontalMargin = 25,
       this.verticalMargin = 0,
       this.blurRadius = 12,
-      this.verticalPadding = 20,
+      this.verticalPadding = 0,
       this.horizontalPadding = 25,
       this.color,this.margin,this.padding});
 
@@ -41,7 +41,7 @@ class ShadowedContainer extends StatelessWidget {
           cornerSmoothing: 1,
         ),
         border: Border.all(
-          color: Colors.green.shade200,
+          color: Color(0xff00AEEF).withOpacity(.3),
           width: 1,
         ),
         boxShadow: [
