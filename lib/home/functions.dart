@@ -1,4 +1,5 @@
 import 'package:coop_location/home/controller.dart';
+import 'package:coop_location/home/success_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -94,6 +95,18 @@ String? titleToData({required String title, int? index}) {
     return controller.type;
   } else if (title == 'District') {
     return controller.district;
+  }else if (title == 'Branch name') {
+    return controller.branch;
+  }else if (title == 'Branch code') {
+    return controller.branchCode;
+  }else if (title == 'Phone number') {
+    return controller.phoneNumber;
+  }else if (title == 'Region') {
+    return controller.region;
+  }else if (title == 'City') {
+    return controller.city;
+  }else if (title == 'Street') {
+    return controller.street;
   }
   return null;
 }
@@ -121,11 +134,12 @@ onTextFieldChange({
 }
 
 onActionButtonPressed() async {
+  unFocus();
   Controller controller = Controller.to;
   controller.isSubmitting = true;
   controller.update();
   try {
-    // await Future.delayed(Duration(seconds: 1));
+    // await Future.delayed(Duration(seconds: 3));
     // Get.snackbar('succes', 'message cdcvnhdsjvb dsbvsd',
     //     snackPosition: SnackPosition.BOTTOM,
     //     backgroundColor: Colors.green.withOpacity(.5),
@@ -143,14 +157,11 @@ onActionButtonPressed() async {
       ..set('District', controller.district);
     var backupResult = await backupData.save();
     if (backupResult.statusCode == 201 || backupResult.statusCode == 200) {
-      Get.snackbar('succes', 'message cdcvnhdsjvb dsbvsd',snackPosition: SnackPosition.BOTTOM);
+      Get.off(SuccessScreen());
+      // Get.snackbar('succes', 'message cdcvnhdsjvb dsbvsd',snackPosition: SnackPosition.BOTTOM);
     } else {
-      // showSnackbar(
-      //   text:
-      //   'error uploading other transaction number\n${otherTransactionNumberResult
-      //       .error?.message}',
-      //   hideBeforeSnackBar: true,
-      // );
+      Get.snackbar('error', 'jhhgkgk',snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.red);
+
       return null;
     }
   } catch (e) {

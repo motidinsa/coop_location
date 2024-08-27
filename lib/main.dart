@@ -10,6 +10,7 @@ import 'package:location/location.dart' as loc;
 
 import 'home/action_button.dart';
 import 'home/parse_init.dart';
+import 'home/success_screen.dart';
 // import 'package:location/location.dart';
 
 void main() {
@@ -31,21 +32,22 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: Color(0xff00AEEF),
-                strokeWidth: 3,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                'Submitting, please wait',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black54
-                ),
-              )
+              Image.asset('assets/loading.gif',width: 120,),
+              // CircularProgressIndicator(
+              //   color: Color(0xff00AEEF),
+              //   strokeWidth: 3,
+              // ),
+              // SizedBox(
+              //   height: 10,
+              // ),
+              // Text(
+              //   'Submitting, please wait',
+              //   style: TextStyle(
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.black54
+              //   ),
+              // )
             ],
           ),
         );
@@ -57,16 +59,15 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff00AEEF)),
           useMaterial3: true,
         ),
-        home: const MyHomePage(title: 'Coop location'),
+        home: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key,});
 
-  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -79,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     Get.put<Controller>(Controller());
-    getCurrentPosition();
+    // getCurrentPosition();
     super.initState();
   }
 
@@ -89,10 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
       onTap: () {
         unFocus();
       },
-      child: Scaffold(
+      child:
+      // SuccessScreen()
+      Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text(widget.title),
+          title: Text('Coop location'),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 15, bottom: 15),
@@ -135,19 +138,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (controller.isLocationLoading) ...[
-                        Text('Fetching location'),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color(0xff00AEEF),
-                            ))
-                      ] else if (controller.locationError) ...[
+                       if (controller.isLocationLoading) ...[
+                    Text('Fetching location'),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Color(0xff00AEEF),
+                        ))
+                  ] else if(controller.latitude==0||controller.longitude==0)...[
+                        TextButton(onPressed: (){
+                          unFocus();
+                          getCurrentPosition();}, child: Text('Get location',style: TextStyle(color: Color(0xff00AEEF)),))
+                      ]
+                     else if (controller.locationError) ...[
                         Text('Some error occured'),
                         SizedBox(
                           width: 10,
