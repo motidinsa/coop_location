@@ -93,7 +93,7 @@ onTextFieldPressed({required String title, int? index}) {
       data = ['CRM', 'NCR', 'Branch'].reversed.toList();
     } else {
       data = [
-        'Addi Ababa',
+        'Addis Ababa',
         'Afar',
         'Amhara',
         'Benishangul-Gumuz',
@@ -263,13 +263,20 @@ Future<bool> _handleLocationPermission() async {
   if (!_serviceEnabled) {
     _serviceEnabled = await location.requestService();
     if (!_serviceEnabled) {
-      debugPrint('Location Denied once');
+      Controller controller = Controller.to;
+      controller.isLocationLoading = false;
+      controller.update();
+      return false;
     }
   }
   permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
+  // permission = await location.;
+  if ( permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
+    Controller controller = Controller.to;
+    controller.isLocationLoading = false;
+    controller.update();
       ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
           duration: Duration(seconds: 8),
           content: Text(
@@ -278,6 +285,9 @@ Future<bool> _handleLocationPermission() async {
     }
   }
   if (permission == LocationPermission.deniedForever) {
+    Controller controller = Controller.to;
+    controller.isLocationLoading = true;
+    controller.update();
     ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
         duration: Duration(seconds: 5),
         content: Text(
@@ -297,7 +307,7 @@ Future<void> getCurrentPosition() async {
     controller.locationError = false;
     controller.update();
     Geolocator.getPositionStream(
-            locationSettings: LocationSettings(accuracy: LocationAccuracy.high))
+            locationSettings: LocationSettings(accuracy: LocationAccuracy.high,timeLimit: Duration(seconds: 10)))
         .listen((Position? position) {
       controller.latitude = position?.latitude ?? 0;
       controller.longitude = position?.longitude ?? 0;
@@ -310,7 +320,7 @@ Future<void> getCurrentPosition() async {
     });
     // await Geolocator.getCurrentPosition(
     //         desiredAccuracy: LocationAccuracy.high,
-    //         timeLimit: Duration(seconds: 15))
+    //         timeLimit: Duration(seconds: 10))
     //     .then((Position position) {
     //   controller.latitude = position.latitude;
     //   controller.longitude = position.longitude;
@@ -322,31 +332,10 @@ Future<void> getCurrentPosition() async {
     //   controller.locationError = true;
     //   controller.update();
     // });
-  }
-}
-
-Future<bool?> uploadToDatabaseBack4App() async {
-  Controller controller = Controller.to;
-  final backupData = ParseObject('LocationData')
-    ..set('BranchCode', 'et33')
-    ..set('BranchName', controller.branch)
-    ..set('Type', controller.type)
-    ..set('Region',
-        '${controller.street},${controller.city},${controller.region}')
-    ..set('PhoneNumber', controller.phoneNumber)
-    ..set('Latitude', controller.latitude)
-    ..set('Longitude', controller.longitude)
-    ..set('District', controller.district);
-  var backupResult = await backupData.save();
-  if (backupResult.statusCode == 201 || backupResult.statusCode == 200) {
-  } else {
-    // showSnackbar(
-    //   text:
-    //   'error uploading other transaction number\n${otherTransactionNumberResult
-    //       .error?.message}',
-    //   hideBeforeSnackBar: true,
-    // );
-    return null;
+  }else{
+    Controller controller = Controller.to;
+    controller.isLocationLoading = false;
+    controller.update();
   }
 }
 
