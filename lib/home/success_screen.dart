@@ -49,13 +49,18 @@ class SuccessScreen extends StatelessWidget {
               SizedBox(
                 height: 5,
               ),
-              ListView.separated(shrinkWrap: true,physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (ctx, index) => RichText(
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (ctx, index) => index == 4 && controller.type!='Branch'?Container():RichText(
                         text: TextSpan(
                           style: TextStyle(color: Colors.grey.shade800),
                           children: [
                             TextSpan(
-                              text: '${controller.titles[index]}:  ',
+                              text: controller.type == 'Branch' &&
+                                      controller.titles[index] == 'Phone number'
+                                  ? 'Branch phone number:  '
+                                  : '${controller.titles[index]}:  ',
                               style: TextStyle(
                                   fontSize: 18,
                                   // color: Colors.black,
@@ -70,9 +75,12 @@ class SuccessScreen extends StatelessWidget {
                         ),
                       ),
                   separatorBuilder: (ctx, index) => SizedBox(
-                        height: 5,
+                        height: index == 4 && controller.type!='Branch'?0:5,
                       ),
-                  itemCount: controller.titles.length),SizedBox(height: 15,),
+                  itemCount: controller.titles.length),
+              SizedBox(
+                height: 15,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
@@ -81,22 +89,24 @@ class SuccessScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {Get.off(MyHomePage());
-                          controller.type='';
-                          controller.district='';
-                          controller.branch='';
-                          controller.branchCode='';
-                          controller.phoneNumber='';
-                          controller.region='';
-                          controller.city='';
-                          controller.street='';
-                        controller.latitude = 0;
-                        controller.longitude = 0;
-                        controller.isLocationLoading = false;
-                        controller.locationError = false;
-                        controller.isSubmitting = false;
-                        controller.update();
-                          },
+                        onPressed: () {
+                          Get.off(MyHomePage());
+                          controller.type = '';
+                          controller.district = '';
+                          controller.branch = '';
+                          controller.branchCode = '';
+                          controller.phoneNumber = '';
+                          controller.region = '';
+                          controller.city = '';
+                          controller.street = '';
+                          controller.latitude = 0;
+                          controller.longitude = 0;
+                          controller.isLocationLoading = false;
+                          controller.locationError = false;
+                          controller.isSubmitting = false;
+                          controller.isSubmitButtonPressed=false;
+                          controller.update();
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -104,7 +114,7 @@ class SuccessScreen extends StatelessWidget {
                               15,
                             ),
                           ),
-                          backgroundColor:  Color(0xff00AEEF).withOpacity(.8),
+                          backgroundColor: Color(0xff00AEEF).withOpacity(.8),
                         ),
                         child: Text(
                           'Add another record',

@@ -1,3 +1,4 @@
+import 'package:coop_location/home/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -35,39 +36,44 @@ class _CustomTextField2State extends State<CustomTextField2> {
       );
     });
     return TextFormField(
-        textAlignVertical: TextAlignVertical.center,
-        controller: textEditingController,
-        focusNode: focusNode,
-        readOnly: isReadOnlyTitle(title: widget.title),
-        keyboardType: widget.title == 'Phone number'?TextInputType.phone:null,
-        onChanged: (data) => onTextFieldChange(
-              title: widget.title,
-              data: data,
-            ),
-        onTap: () => onTextFieldPressed(
-              title: widget.title,
-              index: widget.index,context: context
-            ),
-        decoration: InputDecoration(
-          fillColor: widget.color ?? Color(0xff00AEEF).withOpacity(.1),
-          filled: true,
-          errorMaxLines: 2,
-          border: UnderlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.circular(12)),
-          prefixIcon: titleToIcon(title: widget.title),
-          suffixIcon: getSuffixWidget(title: widget.title),
-          suffixIconConstraints: BoxConstraints(),helperText: 'eg, bole road rwanda',
-          // hintText: 'hint text',
-          labelText: widget.title,
-          // labelStyle: TextStyle(overflow: TextOverflow.fade),
-          floatingLabelStyle: TextStyle(color: Colors.green.shade900),
-          contentPadding:
-              const EdgeInsets.only(left: 30, right: 20, top: 10, bottom: 10),
-          // validator: (value) => validateInput(
-          //   data: textEditingController.text,
-          //   title: widget.title,
-          // ),
-        ));
+      textAlignVertical: TextAlignVertical.center,
+      controller: textEditingController,
+      focusNode: focusNode,
+      readOnly: isReadOnlyTitle(title: widget.title),
+      keyboardType: widget.title == 'Phone number' ? TextInputType.phone : null,
+      autovalidateMode: Controller.to.isSubmitButtonPressed?AutovalidateMode.always:null,
+      onChanged: (data) => onTextFieldChange(
+        title: widget.title,
+        data: data,
+      ),
+      onTap: () => onTextFieldPressed(
+        title: widget.title,
+        index: widget.index,
+      ),
+      decoration: InputDecoration(
+        fillColor: widget.color ?? Color(0xff00AEEF).withOpacity(.1),
+        filled: true,
+        errorMaxLines: 2,
+        border: UnderlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.circular(12)),
+        prefixIcon: titleToIcon(title: widget.title),
+        suffixIcon: getSuffixWidget(title: widget.title),
+        suffixIconConstraints: BoxConstraints(),
+        helperText: titleToHelperText(title: widget.title),
+        // hintText: 'hint text',
+        labelText: widget.title == 'Phone number'
+            ? 'Branch phone number'
+            : widget.title,
+        // labelStyle: TextStyle(overflow: TextOverflow.fade),
+        floatingLabelStyle: TextStyle(color: Colors.green.shade900),
+        contentPadding:
+            const EdgeInsets.only(left: 30, right: 20, top: 10, bottom: 10),
+      ),
+      validator: (value) => validateInput(
+        data: textEditingController.text,
+        title: widget.title,
+      ),
+    );
   }
 }

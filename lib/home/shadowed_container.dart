@@ -1,7 +1,6 @@
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 
-
 class ShadowedContainer extends StatelessWidget {
   final Widget child;
   final double horizontalMargin;
@@ -21,21 +20,25 @@ class ShadowedContainer extends StatelessWidget {
       this.blurRadius = 12,
       this.verticalPadding = 0,
       this.horizontalPadding = 25,
-      this.color,this.margin,this.padding});
+      this.color,
+      this.margin,
+      this.padding});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:margin?? EdgeInsets.symmetric(
-        horizontal: horizontalMargin,
-        vertical: verticalMargin,
-      ),
-      padding:padding?? EdgeInsets.symmetric(
-        horizontal: horizontalPadding,
-        vertical: verticalPadding,
-      ),
+      margin: margin ??
+          EdgeInsets.symmetric(
+            horizontal: horizontalMargin,
+            vertical: verticalMargin,
+          ),
+      padding: padding ??
+          EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
+          ),
       decoration: BoxDecoration(
-        color: color?? Color(0xfffcfdf6),
+        color: color ?? Color(0xfffcfdf6),
         borderRadius: SmoothBorderRadius(
           cornerRadius: 15,
           cornerSmoothing: 1,
@@ -47,7 +50,7 @@ class ShadowedContainer extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade400,
-            spreadRadius:.1 ,
+            spreadRadius: .1,
             blurRadius: blurRadius,
             offset: const Offset(0, 2),
           ),

@@ -32,7 +32,10 @@ class MyApp extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/loading.gif',width: 120,),
+              Image.asset(
+                'assets/loading.gif',
+                width: 120,
+              ),
               // CircularProgressIndicator(
               //   color: Color(0xff00AEEF),
               //   strokeWidth: 3,
@@ -53,12 +56,14 @@ class MyApp extends StatelessWidget {
         );
       },
       child: GetMaterialApp(
-        title: 'Coop location',
+        title: 'Coop Location',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff00AEEF)),
-          useMaterial3: true,
-        ),
+
+        // theme: ThemeData(
+        //   colorScheme: ColorScheme.fromSeed(seedColor: Color(0xff00AEEF)),
+        //   useMaterial3: true,
+        // ),
+
         home: const MyHomePage(),
       ),
     );
@@ -66,8 +71,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key,});
-
+  const MyHomePage({
+    super.key,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -91,11 +97,16 @@ class _MyHomePageState extends State<MyHomePage> {
         unFocus();
       },
       child:
-      // SuccessScreen()
-      Scaffold(
+          // SuccessScreen()
+          Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text('Coop location'),
+          backgroundColor: Color(0xff00AEEF).withOpacity(.7),
+          centerTitle: true,
+          elevation: 5,
+          title: Text(
+            'Coop Location',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 15, bottom: 15),
@@ -121,12 +132,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
                     child: ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (ctx, index) => CustomTextField2(
-                        title: controller.titles[index],
-                        index: index,
-                      ),
+                      itemBuilder: (ctx, index) =>
+                          controller.type != 'Branch' && index == 4
+                              ? Container()
+                              : CustomTextField2(
+                                  title: controller.titles[index],
+                                  index: index,
+                                ),
                       separatorBuilder: (ctx, index) => SizedBox(
-                        height: 15,
+                        height:
+                            controller.type != 'Branch' && index == 4 ? 0 : 15,
                       ),
                       itemCount: controller.titles.length,
                       shrinkWrap: true,
@@ -138,25 +153,31 @@ class _MyHomePageState extends State<MyHomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                       if (controller.isLocationLoading) ...[
-                    Text('Fetching location'),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xff00AEEF),
-                        ))
-                  ] else if(controller.latitude==0||controller.longitude==0)...[
-                        TextButton(onPressed: (){
-                          unFocus();
-                          getCurrentPosition();}, child: Text('Get location',style: TextStyle(color: Color(0xff00AEEF)),))
-                      ]
-                     else if (controller.locationError) ...[
-                        Text('Some error occured'),
+                      if (controller.isLocationLoading) ...[
+                        Text('Fetching location'),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xff00AEEF),
+                            ))
+                      ] else if (controller.latitude == 0 ||
+                          controller.longitude == 0) ...[
+                        TextButton(
+                            onPressed: () {
+                              unFocus();
+                              getCurrentPosition();
+                            },
+                            child: Text(
+                              'Get location',
+                              style: TextStyle(color: Color(0xff00AEEF)),
+                            ))
+                      ] else if (controller.locationError) ...[
+                        Text('Location permission denied'),
                         SizedBox(
                           width: 10,
                         ),

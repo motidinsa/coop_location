@@ -17,6 +17,7 @@ class Controller extends GetxController {
   bool isLocationLoading = false;
   bool locationError = false;
   bool isSubmitting = false;
+  bool isSubmitButtonPressed = false;
   List<String> titles = [
     'Type',
     'District',

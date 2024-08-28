@@ -16,7 +16,9 @@ class AlertDialogOptionSelect extends StatelessWidget {
     return GestureDetector(
       child: AlertDialog(
         contentPadding: EdgeInsets.zero,
-        surfaceTintColor: Color(0xff00AEEF),
+        // surfaceTintColor: Color(0xff00AEEF),
+        surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white,
         titlePadding: EdgeInsets.only(
           left: 24,
           right: 24,
@@ -43,7 +45,7 @@ class AlertDialogOptionSelect extends StatelessWidget {
             shrinkWrap: true,
             physics: const ClampingScrollPhysics(),
             children: [
-              ListView.builder(
+              ListView.separated(
                 shrinkWrap: true,
                 reverse: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -54,6 +56,10 @@ class AlertDialogOptionSelect extends StatelessWidget {
                     data: data[index],
                   );
                 },
+                separatorBuilder: (ctx, index) => Divider(
+                  height: 0,
+                  color: Colors.grey.shade300,
+                ),
                 itemCount: data.length,
               ),
               const SizedBox(height: 8)
