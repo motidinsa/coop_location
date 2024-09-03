@@ -177,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(color: Color(0xff00AEEF)),
                             ))
                       ] else if (controller.locationError) ...[
-                        Text('Location permission denied'),
+                        Text('Please try again'),
                         SizedBox(
                           width: 10,
                         ),

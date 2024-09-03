@@ -307,7 +307,7 @@ Future<void> getCurrentPosition() async {
     controller.locationError = false;
     controller.update();
     Geolocator.getPositionStream(
-            locationSettings: LocationSettings(accuracy: LocationAccuracy.high,timeLimit: Duration(seconds: 10)))
+            locationSettings: LocationSettings(accuracy: LocationAccuracy.high,timeLimit: Duration(seconds: 15)))
         .listen((Position? position) {
       controller.latitude = position?.latitude ?? 0;
       controller.longitude = position?.longitude ?? 0;
